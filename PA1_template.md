@@ -1,9 +1,4 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 ***
 
 ## Data
@@ -19,11 +14,13 @@ output:
 
 ## Loading and preprocessing the data
 ####*Load the data (i.e. read.csv())*
-```{r data}
+
+```r
      data <- read.csv("activity.csv")
 ```
 ####*Process/transform the data (if necessary) into a format suitable for your analysis.*
-```{r process}
+
+```r
      allsteps <- aggregate(steps~date, data=data, sum, na.rm=T)
 ```
 
@@ -31,7 +28,8 @@ output:
 
 ## What is mean total number of steps taken per day?
 ####*Make a histogram of the total number of steps taken each day.*
-```{r histo, warning=FALSE}
+
+```r
      library(ggplot2)
      qplot(steps, 
            data = allsteps, 
@@ -45,21 +43,25 @@ output:
            )
 ```
 
+![](PA1_template_files/figure-html/histo-1.png)
+
 ####*Calculate and report the mean and median of the total number of steps taken per day.*
-```{r steps}
+
+```r
      meanstep <- format(mean(allsteps$steps), scientific = F)
      medianstep <- median(allsteps$steps)
 ```
 * The mean total number of steps per day:
-     + __`r meanstep`__ steps.
+     + __10766.19__ steps.
 * The median total number of steps per day:
-     + __`r medianstep`__ steps.
+     + __10765__ steps.
 
 ***
 
 ## What is the average daily activity pattern?
 ####*Make a time series plot of the 5-minute interval (x-axis) & the average number of steps taken, averaged across all days (y-axis).*
-```{r interval}
+
+```r
      interval <- aggregate(steps~interval, data=data, mean, na.rm=T)
      plot(steps~interval,
           data = interval,
@@ -71,29 +73,35 @@ output:
           )
 ```
 
+![](PA1_template_files/figure-html/interval-1.png)
+
 ####*Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?*
-```{r maxint}
+
+```r
      maxint <- interval$interval[which.max(interval$steps)]
 ```
-* The interval with the highest average # of steps is __`r maxint`__.
+* The interval with the highest average # of steps is __835__.
      
 ***
 
 ## Imputing missing values
 ####*Calculate and report the total number of missing values in the dataset.*
-```{r NA}
+
+```r
      nacount <- sum(is.na(data$steps))
 ```
-* There are a total of __`r nacount`__ rows with missing data.
+* There are a total of __2304__ rows with missing data.
 
 ####*Fill in missing values in the dataset (using 5-minute interval). Create new dataset without missing data.*
-```{r NA_filled}
+
+```r
      nafill <- data
      nafill$steps[is.na(nafill$steps)] <- tapply(nafill$steps, nafill$interval, mean, na.rm=T)
 ```
 
 ####*Make a histogram of the total # of steps taken each day.*
-```{r No NA Histo}
+
+```r
      nonasteps <- aggregate(steps~date, data=nafill, sum)
      qplot(steps, 
            data = nonasteps, 
@@ -107,15 +115,18 @@ output:
            )
 ```
 
+![](PA1_template_files/figure-html/No NA Histo-1.png)
+
 ####*Calculate total mean & median # of steps per day.*
-```{r No NA Steps}
+
+```r
      nonameanstep <- format(mean(nonasteps$steps), scientific = F)
      nonamedianstep <- format(median(nonasteps$steps), scientific = F)
 ```
 * The mean total number of steps per day (with NAs filled in):
-     + __`r nonameanstep`__ steps.
+     + __10766.19__ steps.
 * The median total number of steps per day (with NAs filled in):
-     + __`r nonamedianstep`__ steps.
+     + __10766.19__ steps.
 
 ####*Do these values differ from earlier estimates? What is the impact of imputing missing data?*
 * There is a minimal difference shown within the median by imputing missing data.
@@ -124,7 +135,8 @@ output:
 
 ## Are there differences in activity patterns between weekdays and weekends?
 ####*Create new variable in dataset with two levels – “weekday” and “weekend”.*
-```{r day variables}
+
+```r
      #add day variable to dataset & define weekday vs. weekday
      nafill$day <- weekdays(as.Date(as.character(nafill$date)))  
      
@@ -147,7 +159,11 @@ output:
           ylab = "Avg. # of Steps",
           main = "Avg. Weekday Activity Pattern"
           )
-     
+```
+
+![](PA1_template_files/figure-html/day variables-1.png)
+
+```r
      plot(stepends, 
           type = "l", 
           col = "blue", 
@@ -156,3 +172,5 @@ output:
           main = "Avg. Weekend Activity Pattern"
           )
 ```
+
+![](PA1_template_files/figure-html/day variables-2.png)
